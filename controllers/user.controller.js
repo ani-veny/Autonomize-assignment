@@ -1,12 +1,9 @@
-const httpStatus = require("http-status");
+ const axios = require('axios')
 const { User } = require("../models/user.model");
 
 const get_friends = async(followers_url, following_url)=>{
 
-
-
     const updated_following_url = following_url.split("{")[0];
-
     const followers = await axios.get(followers_url);    //getting the followers
     const following = await axios.get(updated_following_url);  //getting the following people
 
@@ -14,7 +11,6 @@ const get_friends = async(followers_url, following_url)=>{
     const followingLogins = following.data.map(follow => follow.login);
 
     const friends = followersLogins.filter(el=> followingLogins.includes(el));
-
     return friends;
 
 }
@@ -28,14 +24,12 @@ const getUsers= async (req,res)=>{
     }
     data  = await User.find({is_removed:false})
     res.json({status: "success", data:data});
-
 }
 
 const addUser = async (req,res)=>{
     const {username} = req.params;
 
     // console.log(username)
-
     let data = await User.findOne({login:username});
 
     if(data)
@@ -48,8 +42,6 @@ const addUser = async (req,res)=>{
     else
     {
         const response  = await axios.get(`https://api.github.com/users/${username}`)
-
-        // console.log(ans.data,"data from api")
 
         const {followers_url, following_url} = response.data;
 
@@ -66,22 +58,27 @@ const getuserBylocationOrUserName = async (req,res)=>{
     try {
         const { username, location } = req.query;
     
-        const query = {}; //query object
+        // Check if both username and location are missing
+        if (!username && !location) {
+            return res.status(400).json({ status: "failed", message: 'Data not found' });
+        }
+    
+        const query = {}; // Query object
         if (username) {
-          query.login = new RegExp(username, 'i'); // Case-insensitive username search
+            query.login = new RegExp(username, 'i'); // Case-insensitive username search
         }
         if (location) {
-          query.location = new RegExp(location, 'i'); // Case-insensitive location search
+            query.location = new RegExp(location, 'i'); // Case-insensitive location search
         }
     
         // Search in the database for the query object.
         const searchResults = await User.find(query);
-    
-        res.json({ status: "success", results: searchResults });
-      } catch (error) {
+        res.json({ status: "success", data: searchResults });
+    } catch (error) {
         console.error('Error:', error.message);
-        res.status(500).json({ status: "failed",  error: 'Internal Server Error' });
-      }
+        res.status(500).json({ status: "failed", message: 'Internal server error' });
+    }
+    
 }
 
 const updateUser= async (req,res)=>{
@@ -114,9 +111,9 @@ const deleteUser= async (req,res)=>{
     try{
         const {username} = req.params;
     
-        const user  = await User.findOneAndUpdate({login:username},{is_removed:true},{new:true}); //Soft deleting the user
+        const user  = await User.findOneAndUpdate({login: username},{is_removed:true},{new:true}); //Soft deleting the user
     
-        console.log(user);
+        // console.log(user, "sdfghjhgfds");
     
         res.json({status:"Success" ,message:"Document deleted succesfully"})
     
