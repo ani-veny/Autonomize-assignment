@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 // Reusable URL validator function
 const urlValidator = {
@@ -7,7 +7,7 @@ const urlValidator = {
     const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
     return urlRegex.test(value);
   },
-  message: props => `${props.value} is not a valid URL!`
+  message: (props) => `${props.value} is not a valid URL!`,
 };
 
 // User schema
@@ -15,12 +15,12 @@ const userSchema = new mongoose.Schema({
   login: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   id: { type: Number, default: "" },
   node_id: { type: String, default: "" },
   avatar_url: { type: String, validate: urlValidator, default: "" },
-  gravatar_id: { type: String, validate: urlValidator, default: "" },
+  gravatar_id: { type: String, default: "" },
   url: { type: String, validate: urlValidator, default: "" },
   html_url: { type: String, validate: urlValidator, default: "" },
   followers_url: { type: String, validate: urlValidator, default: "" },
@@ -36,40 +36,31 @@ const userSchema = new mongoose.Schema({
   site_admin: { type: Boolean, default: "false" },
   name: { type: String, default: "" },
   company: { type: String, default: "" },
-  blog: { type: String, validate: urlValidator, default: "" },
+  blog: { type: String, default: "" },
   location: { type: String, default: "" },
   email: {
     type: String,
-    default: null,
-    unique: true,
-    match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/            //Email validation.
+    match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, //Email validation.
   },
-  hireable: { type: Boolean, default: null },
-  bio: { type: String, default: null },
+  hireable: { type: Boolean,},
+  bio: { type: String, default: "" },
   twitter_username: { type: String, default: "" },
   public_repos: { type: Number, default: "" },
   public_gists: { type: Number, default: "" },
   followers: { type: Number, default: "" },
   following: { type: Number, default: "" },
-  created_at: { type: Date, default: Date.now },
-  updated_at: { type: Date, default: Date.now },
-  is_Removed: {
+  created_at: { type: Date },
+  updated_at: { type: Date },
+  is_removed: {
     type: Boolean,
-    default: false
+    default: false,
   },
-  friends: [{ type: String, default: "" }]
+  friends: [{ type: String, default: "" }],
 });
 
-// Pre-save middleware for updating the 'updated_at' field
-userSchema.pre('save', function (next) {
-    const currentDate = new Date();
-    this.updated_at = currentDate;
-  
-    next();
-  });
 
 // Create the Mongoose model
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
 // Export the model
-module.exports = User;
+module.exports.User = User;
