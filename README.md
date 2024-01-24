@@ -1,4 +1,7 @@
 # Autonomize-assignment
+This serves as the backend for the primary application, employing Node.js and Express.js for backend development and MongoDB as the underlying database. The JOI validator, a third-party library, is incorporated to validate the MongoDB URL and port number. Additionally, regular expressions (regex) are applied within the schema to validate email addresses and URLs for specific fields. Furthermore, error handling has been implemented in each controller to enhance validation processes.
+Endpoints are as follows:-
+
 1.  Search by Username and Location Route
 Endpoint:GET /search
 
