@@ -1,4 +1,3 @@
-const catchAsync = require("../utils/catchAsync");
 const httpStatus = require("http-status");
 const { User } = require("../models/user.model");
 
@@ -107,7 +106,7 @@ const updateUser= async (req,res)=>{
         }
 
     }catch(e){
-        res.send(status: "failed", error: "Error in updating user details "+e);
+        res.send({status:"failed", error:"Error in updating user details "+e});
     }
 }
 
