@@ -34,7 +34,7 @@ const addUser = async (req,res)=>{
 
     if(data)
     {
-        if(data.isDeleted)
+        if(data.is_removed)
         res.json({status: "failed", message:"Data is deleted"})
         else
         res.status(200).json({status: "success", data: data});
@@ -78,7 +78,6 @@ const getuserBylocationOrUserName = async (req,res)=>{
         console.error('Error:', error.message);
         res.status(500).json({ status: "failed", message: 'Internal server error' });
     }
-    
 }
 
 const updateUser= async (req,res)=>{
@@ -103,25 +102,33 @@ const updateUser= async (req,res)=>{
         }
 
     }catch(e){
-        res.send({status:"failed", error:"Error in updating user details "+e});
+        res.status(404).send({status:"failed", error:"Error in updating user details, user not found"});
     }
 }
 
 const deleteUser= async (req,res)=>{
-    try{
-        const {username} = req.params;
+    try {
+        const { username } = req.params;
     
-        const user  = await User.findOneAndUpdate({login: username},{is_removed:true},{new:true}); //Soft deleting the user
-    
-        // console.log(user, "sdfghjhgfds");
-    
-        res.json({status:"Success" ,message:"Document deleted succesfully"})
-    
+        if (!username) {
+            return res.status(400).json({ status: "failed", message: 'Username not found' });
         }
-        catch(e)
-        {
-            res.json({message:"Error deleting the data", Error:e})
+    
+        const user = await User.findOne({ login: username });
+    
+        if (!user) {
+            return res.status(404).json({ status: "failed", message: 'User not found' });
         }
+    
+        // Soft deleting the user
+        await User.findOneAndUpdate({ login: username }, { is_removed: true }, { new: true });
+    
+        res.json({ status: "success", message: "Document deleted successfully" });
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ status: "failed", message: 'Error deleting the data', error: error.message });
+    }
+    
 }
 
 module.exports={
