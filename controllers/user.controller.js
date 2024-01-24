@@ -37,7 +37,7 @@ const addUser = async (req,res)=>{
         if(data.is_removed)
         res.json({status: "failed", message:"Data is deleted"})
         else
-        res.status(200).json({status: "success", data: data});
+        res.status(200).json({status: "success", data: data})
     }
     else
     {
